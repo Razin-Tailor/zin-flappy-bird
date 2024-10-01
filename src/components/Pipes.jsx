@@ -2,18 +2,27 @@
 import { Rect } from 'react-konva'
 import Constants from '../constants'
 
-const Pipe = ({ pipeX }) => {
+const Pipe = ({ pipeX, topPipeHeight, gap }) => {
     return (
-
-        <Rect
-            x={pipeX}
-            y={0}
-            width={Constants.PIPE_WIDTH}
-            height={300}
-            fill={"#000000"}
-        />
-
+        <>
+            {/* Top pipe */}
+            <Rect
+                x={pipeX}
+                y={0}
+                width={Constants.PIPE_WIDTH}
+                height={topPipeHeight}
+                fill={"#000000"}
+            />
+            {/* Bottom pipe */}
+            <Rect
+                x={pipeX}
+                y={topPipeHeight + gap}
+                width={Constants.PIPE_WIDTH}
+                height={window.innerHeight - topPipeHeight - gap}
+                fill={"#000000"}
+            />
+        </>
     )
 }
 
-export default Pipe
+export default Pipe;

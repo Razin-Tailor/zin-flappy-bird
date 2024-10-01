@@ -14,6 +14,10 @@ const FlappyBird = () => {
 
   const [birdY, setBirdY] = useState(birdYRef.current); // Actual state for React re-render
   const [pipeX, setPipeX] = useState(pipeXRef.current);
+  const [topPipeHeight, setTopPipeHeight] = useState(
+    Math.random() * (window.innerHeight / 2) // Random height for the top pipe
+  );
+  const pipeGap = Constants.PIPE_GAP; // Define a fixed gap between the top and bottom pipes
 
   const gameLoop = () => {
     // Update bird position and velocity based on gravity
@@ -63,7 +67,8 @@ const FlappyBird = () => {
       >
         <Layer>
           <Bird birdY={birdY} className="bg-black" />
-          <Pipe pipeX={pipeX} />
+          {/* Pass both topPipeHeight and gap to Pipe */}
+          <Pipe pipeX={pipeX} topPipeHeight={topPipeHeight} gap={pipeGap} />
         </Layer>
       </Stage>
     </div>

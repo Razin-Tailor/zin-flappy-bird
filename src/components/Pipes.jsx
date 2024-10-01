@@ -1,19 +1,19 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
 import { Rect } from 'react-konva'
+import Constants from '../constants'
 
-const Pipes = ({ pipeDrift }) => {
-    const width = 50
+const Pipe = ({ pipeX }) => {
     return (
-        <div>
-            <Rect
-                x={pipeDrift}
-                y={0}
-                width={width}
-                height={300}
-                fill={"#f5f5f5f5"}
-            />
-        </div>
+
+        <Rect
+            x={pipeX}
+            y={0}
+            width={Constants.PIPE_WIDTH}
+            height={300}
+            fill={"#000000"}
+        />
+
     )
 }
 
-export default Pipes
+export default Pipe

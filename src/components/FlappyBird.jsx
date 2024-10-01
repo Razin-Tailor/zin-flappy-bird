@@ -1,30 +1,58 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Layer, Stage } from "react-konva";
 import Bird from "./Bird";
-import Pipes from "./Pipes";
+import Constants from "../constants";
+import Pipe from "./Pipes";
 
 const FlappyBird = () => {
   const stageRef = useRef();
-  const [birdY, setBirdY] = useState(window.innerHeight / 2);
-  const [velocity, setVelocity] = useState(0);
-  const [pipeDrift, setPipeDrift] = useState(0);
-  const gravity = 0.5;
-  const acceleration = 0.5;
-  const lift = 30;
-  const [pipes, setPipes] = useState([]);
+  const birdYRef = useRef(Constants.BIRD_START_Y);
+  const pipeXRef = useRef(Constants.PIPE_START_X);
+
+  const velocityRef = useRef(0);
+  const pipeSpeedRef = useRef(Constants.PIPE_SPEED);
+
+  const [birdY, setBirdY] = useState(birdYRef.current); // Actual state for React re-render
+  const [pipeX, setPipeX] = useState(pipeXRef.current);
 
   const gameLoop = () => {
-    requestAnimationFrame(gameLoop);
+    // Update bird position and velocity based on gravity
+    velocityRef.current += Constants.GRAVITY;
+    birdYRef.current += velocityRef.current;
+    pipeXRef.current -= pipeSpeedRef.current;
 
-    setBirdY((birdY) => birdY + gravity);
-    setVelocity((velocity) => velocity + gravity);
-    setPipeDrift((pipeDrift) => pipeDrift + acceleration);
-  }
+    // Prevent bird from going below the screen
+    if (birdYRef.current > window.innerHeight - Constants.BIRD_RADIUS) {
+      birdYRef.current = window.innerHeight - Constants.BIRD_RADIUS; // Keep the bird on screen
+      velocityRef.current = 0; // Stop when hitting the ground
+    }
+
+    // Occasionally sync state with React for rendering
+    setBirdY(birdYRef.current);
+    setPipeX(pipeXRef.current);
+
+    // Continue the game loop
+    requestAnimationFrame(gameLoop);
+  };
 
   useEffect(() => {
     const animationId = requestAnimationFrame(gameLoop);
     return () => cancelAnimationFrame(animationId); // Cleanup on unmount
-  }, [birdY, velocity]);
+  }, []); // Only run once
+
+  const handleKeyDown = (e) => {
+    if (e.code === "Space") {
+      console.log("Space key pressed", birdYRef.current);
+      velocityRef.current = -Constants.JUMP_FORCE; // Apply lift to the bird (upward velocity)
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <div>
@@ -34,8 +62,8 @@ const FlappyBird = () => {
         height={window.innerHeight}
       >
         <Layer>
-          <Bird birdY={birdY} />
-          {pipes.map((pipe) => pipe)}
+          <Bird birdY={birdY} className="bg-black" />
+          <Pipe pipeX={pipeX} />
         </Layer>
       </Stage>
     </div>

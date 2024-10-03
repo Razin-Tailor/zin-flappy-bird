@@ -6,7 +6,7 @@ const Bird = ({ birdY }) => {
   return (
     <Circle
       fill={"#000000"}
-      x={30}
+      x={100}
       y={birdY}
       radius={20}
     ></Circle>

@@ -59,20 +59,18 @@ const FlappyBird = () => {
   }, []);
 
   return (
-    <div>
-      <Stage
-        ref={stageRef}
-        width={window.innerWidth}
-        height={window.innerHeight}
-      >
-        <Layer>
-          <Bird birdY={birdY} className="bg-black" />
-          {/* Pass both topPipeHeight and gap to Pipe */}
-          <Pipe pipeX={pipeX} topPipeHeight={topPipeHeight} gap={pipeGap} />
-        </Layer>
-      </Stage>
-    </div>
-  );
+    <Stage
+      ref={stageRef}
+      width={window.innerWidth}
+      height={window.innerHeight}
+    >
+      <Layer>
+        <Bird birdY={birdY} className="bg-black" />
+        {/* Pass both topPipeHeight and gap to Pipe */}
+        <Pipe pipeX={pipeX} topPipeHeight={topPipeHeight} gap={pipeGap} />
+      </Layer>
+    </Stage>
+  )
 };
 
 export default FlappyBird;

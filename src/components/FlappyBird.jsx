@@ -8,19 +8,16 @@ import { getTopPipeHeight } from "../utils";
 const FlappyBird = () => {
   const stageRef = useRef();
   const birdYRef = useRef(Constants.BIRD_START_Y);
-  // const pipeXRef = useRef(Constants.PIPE_START_X);
 
   const velocityRef = useRef(0);
   const pipeSpeedRef = useRef(Constants.PIPE_SPEED);
 
   const [birdY, setBirdY] = useState(birdYRef.current); // Actual state for React re-render
-  // const [pipeX, setPipeX] = useState(pipeXRef.current);
-  // const [topPipeHeight, setTopPipeHeight] = useState(
-  // getTopPipeHeight() // Random height for the top pipe
-  // );
   const pipeGap = Constants.PIPE_GAP; // Define a fixed gap between the top and bottom pipes
 
   const [pipes, setPipes] = useState([]) // Store all the pipes
+
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     // Create a new pipe every 3 seconds
@@ -34,7 +31,10 @@ const FlappyBird = () => {
         height: newTopPipeHeight
       };
       setPipes((pipes) => [...pipes, newPipe]);
-    }, 3000);
+      // update score logaritmically
+      setScore((prevScore) => Math.floor(pipes ? prevScore + Math.log10(pipes.length) : 0));
+
+    }, 2000);
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, []);
@@ -43,7 +43,6 @@ const FlappyBird = () => {
     // Update bird position and velocity based on gravity
     velocityRef.current += Constants.GRAVITY;
     birdYRef.current += velocityRef.current;
-    // pipeXRef.current -= pipeSpeedRef.current;
 
     // Prevent bird from going below the screen
     if (birdYRef.current > window.innerHeight - Constants.BIRD_RADIUS) {
@@ -64,7 +63,6 @@ const FlappyBird = () => {
       }))
     );
     setBirdY(birdYRef.current);
-    // setPipeX(pipeXRef.current);
 
     // Continue the game loop
     requestAnimationFrame(gameLoop);
@@ -80,6 +78,12 @@ const FlappyBird = () => {
       console.log("Space key pressed", birdYRef.current);
       velocityRef.current = -Constants.JUMP_FORCE; // Apply lift to the bird (upward velocity)
     }
+    // esc to end game
+    if (e.code === "Escape") {
+      console.log("Game Over");
+      alert(`Game Over! Your score is ${score}`);
+      setPipes([]);
+    }
   };
 
   useEffect(() => {
@@ -90,22 +94,25 @@ const FlappyBird = () => {
   }, []);
 
   return (
-    <Stage
-      ref={stageRef}
-      width={window.innerWidth}
-      height={window.innerHeight}
-    >
-      <Layer>
-        <Bird birdY={birdY} className="bg-black" />
-        {/* Pass both topPipeHeight and gap to Pipe */}
-        {pipes && pipes.map((pipe, index) => (
-          <Pipe key={index} pipeX={pipe.x} topPipeHeight={pipe.height} gap={pipeGap} />
-        ))}
-        {/* Render the Pipe component */}
-        {/* <Pipe pipeX={pipeX} topPipeHeight={topPipeHeight} gap={pipeGap} /> */}
-      </Layer>
-    </Stage>
-  )
+    <>
+      <Stage
+        ref={stageRef}
+        width={window.innerWidth}
+        height={window.innerHeight}
+        className="bg-green-300"
+      >
+        <Layer>
+          <Bird birdY={birdY} className="" />
+          {pipes && pipes.map((pipe, index) => (
+            <Pipe key={index} pipeX={pipe.x} topPipeHeight={pipe.height} gap={pipeGap} />
+          ))}
+        </Layer>
+      </Stage>
+      <div className="absolute top-0 right-0 p-4 rounded-sm bg-gray-600">
+        <p className="text-2xl text-gray-200">Score: {score}</p>
+      </div>
+    </>
+  );
 };
 
 export default FlappyBird;

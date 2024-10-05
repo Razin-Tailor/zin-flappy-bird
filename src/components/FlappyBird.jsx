@@ -31,7 +31,7 @@ const FlappyBird = () => {
           height: newTopPipeHeight,
         };
         pipesRef.current = [...pipesRef.current, newPipe]; // Update the ref
-        setScore((prevScore) => Math.floor(pipesRef.current ? prevScore + Math.log10(pipesRef.current.length) : 0));
+        setScore(0);
       }
     }, Constants.PIPE_INTERVAL);
 
@@ -63,6 +63,9 @@ const FlappyBird = () => {
         handleGameOver();
         return; // Stop game loop on collision
       }
+
+      // Remove pipes that are out of the screen
+      pipesRef.current = pipesRef.current.filter((pipe) => pipe.x > -Constants.PIPE_WIDTH);
 
       // update pipeRef x positions
 

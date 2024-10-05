@@ -29,9 +29,9 @@ const FlappyBird = () => {
         const newPipe = {
           x: Constants.PIPE_START_X,
           height: newTopPipeHeight,
+          scored: false,
         };
         pipesRef.current = [...pipesRef.current, newPipe]; // Update the ref
-        setScore(0);
       }
     }, Constants.PIPE_INTERVAL);
 
@@ -73,6 +73,14 @@ const FlappyBird = () => {
         ...pipe,
         x: pipe.x - pipeSpeedRef.current,
       }));
+
+      // Update the score when the bird passes a pipe
+      pipesRef.current.forEach((pipe) => {
+        if (pipe.x <= Constants.BIRD_START_X && !pipe.scored) {
+          setScore((prevScore) => prevScore + 1);
+          pipe.scored = true;
+        }
+      });
       setBirdY(birdYRef.current);
 
       // Continue the game loop
@@ -106,7 +114,7 @@ const FlappyBird = () => {
 
       // Check if the bird is within the pipe's X range (pipeLeftEdge to pipeRightEdge)
       const withinPipeXRange = birdRightEdge > pipeLeftEdge && birdLeftEdge < pipeRightEdge;
-      console.log("Bird X:", birdLeftEdge, "to", birdRightEdge, "Pipe X:", pipeLeftEdge, "to", pipeRightEdge, "Within X Range:", withinPipeXRange);
+      // console.log("Bird X:", birdLeftEdge, "to", birdRightEdge, "Pipe X:", pipeLeftEdge, "to", pipeRightEdge, "Within X Range:", withinPipeXRange);
 
       if (!withinPipeXRange) {
         return false; // If bird is not in X range, skip Y checks
@@ -116,8 +124,8 @@ const FlappyBird = () => {
       const hittingTopPipe = birdTopEdge < topPipeBottomEdge; // Bird hits the top pipe if it's above the bottom edge of the top pipe
       const hittingBottomPipe = birdBottomEdge > bottomPipeTopEdge; // Bird hits the bottom pipe if it's below the top edge of the bottom pipe
 
-      console.log("Bird Y:", birdTopEdge, "to", birdBottomEdge, "Top Pipe Bottom Edge:", topPipeBottomEdge, "Bottom Pipe Top Edge:", bottomPipeTopEdge);
-      console.log("Hitting Top Pipe:", hittingTopPipe, "Hitting Bottom Pipe:", hittingBottomPipe);
+      // console.log("Bird Y:", birdTopEdge, "to", birdBottomEdge, "Top Pipe Bottom Edge:", topPipeBottomEdge, "Bottom Pipe Top Edge:", bottomPipeTopEdge);
+      // console.log("Hitting Top Pipe:", hittingTopPipe, "Hitting Bottom Pipe:", hittingBottomPipe);
 
       // Return true if the bird hits either the top or bottom pipe
       return hittingTopPipe || hittingBottomPipe;

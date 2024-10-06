@@ -175,22 +175,26 @@ const FlappyBird = () => {
         className="bg-green-300"
       >
         <Layer>
-          {/* // Add a background image filling entire stage */}
 
+          {/* Add a background image filling entire stage */}
           <BackgroundImage />
+
+          {/* <Rect
+            x={0}
+            y={window.innerHeight - 40}
+            width={window.innerWidth}
+            height={40}
+            fillPatternImage={createSlashPattern()}
+            fillPatternRepeat="repeat"
+          /> */}
 
           <Bird birdY={birdY} className="" />
           {pipesRef.current.map((pipe, index) => (
             <Pipe key={index} pipeX={pipe.x} topPipeHeight={pipe.height} gap={pipeGap} />
           ))}
-          {/* Base ground rectabgle that also moves */}
-          <Rect
-            x={0}
-            y={window.innerHeight - 40}
-            width={window.innerWidth}
-            height={40}
-            fill={"#77D800"}
-          />
+
+          {/* Custom ground shape with forward slash type shapes */}
+
         </Layer>
       </Stage>
       <div className="absolute top-0 right-0 p-4 rounded-sm bg-gray-600">
@@ -198,6 +202,26 @@ const FlappyBird = () => {
       </div>
     </>
   );
+
+  function createSlashPattern() {
+    const patternCanvas = document.createElement('canvas');
+    patternCanvas.width = 20;
+    patternCanvas.height = 20;
+    const ctx = patternCanvas.getContext('2d');
+
+    ctx.strokeStyle = '#771000';
+    ctx.lineWidth = 8;
+    ctx.fillStyle = '#77D800';
+
+    // Draw forward slash
+    ctx.beginPath();
+    ctx.moveTo(0, 20);
+    ctx.lineTo(20, 0);
+    ctx.stroke();
+    ctx.fill();
+
+    return patternCanvas;
+  }
 };
 
 export default FlappyBird;

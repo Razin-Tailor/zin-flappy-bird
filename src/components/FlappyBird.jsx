@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Layer, Stage } from "react-konva";
+import { Image, Layer, Rect, Stage } from "react-konva";
 import Bird from "./Bird";
 import Constants from "../constants";
 import Pipe from "./Pipe";
 import { getTopPipeHeight } from "../utils";
+import useImage from "use-image";
 
 const FlappyBird = () => {
   const stageRef = useRef();
@@ -20,6 +21,15 @@ const FlappyBird = () => {
   const [gameOver, setGameOver] = useState(false); // Track game over state
 
   const pipesRef = useRef([]); // Store the pipes in a ref to avoid re-renders
+
+  const BackgroundImage = () => {
+    const [image] = useImage("./background.jpg");
+    return <Image
+      image={image}
+      width={window.innerWidth}
+      height={window.innerHeight}
+    />;
+  }
 
   useEffect(() => {
     // Create a new pipe every 2 seconds
@@ -165,10 +175,22 @@ const FlappyBird = () => {
         className="bg-green-300"
       >
         <Layer>
+          {/* // Add a background image filling entire stage */}
+
+          <BackgroundImage />
+
           <Bird birdY={birdY} className="" />
           {pipesRef.current.map((pipe, index) => (
             <Pipe key={index} pipeX={pipe.x} topPipeHeight={pipe.height} gap={pipeGap} />
           ))}
+          {/* Base ground rectabgle that also moves */}
+          <Rect
+            x={0}
+            y={window.innerHeight - 40}
+            width={window.innerWidth}
+            height={40}
+            fill={"#77D800"}
+          />
         </Layer>
       </Stage>
       <div className="absolute top-0 right-0 p-4 rounded-sm bg-gray-600">
